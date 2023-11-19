@@ -33,6 +33,50 @@ ggplot(original %>%
        aes(x = NA_Sales)) + geom_histogram()
 ```
 
+# Exploring game names
+```{r}
+game_names <- original$Name
+table(game_names)[sample(1:length(game_names), 15)]
+# Games with same name on multiple consoles counted as two!!!
+```
+Ideas:
+summarise by game name + dev combo,
+sum sales
+variable: No. of consoles released on
+
+```{r}
+library(stringr)
+separator_colon <- stringr::str_detect(game_names, ": ")
+separator_line <- stringr::str_detect(game_names, " - ")
+
+# Count as having a subtitle if any match
+subtitled <- separator_colon | separator_line
+
+# Some names could have multiple subtitles! Is that even worse?
+colon_count <- stringr::str_count(game_names, ": ") 
+
+# Making it into variables:
+original$subtitled_name <- subtitled
+original$subtitle_colon_count <- colon_count
+```
+
+```{r}
+by_subtitle <- group_by(original, subtitled_name) %>%
+  summarise(avg = mean(NA_Sales), 
+            std = sd(NA_Sales),
+            no = n())
+
+no_subtitles <- group_by(original, subtitle_colon_count) %>%
+  summarise(avg = mean(NA_Sales), 
+            std = sd(NA_Sales),
+            no = n())
+
+# Actually BOTH hold!!!
+print(by_subtitle)
+print(no_subtitles)
+```
+
+
 # Modelling
 
 Training-testing split
@@ -127,3 +171,13 @@ training_results <- tt_testing |>
 training_results |> metrics(truth = Global_Sales, estimate = .pred)
 
 ```
+
+Historic:
+"Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made"
+linear model
+rsq 18.9%
+mae 0.56
+
+random forest
+rsq 29%
+mae 0.53
