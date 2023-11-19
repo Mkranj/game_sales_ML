@@ -35,3 +35,7 @@ genre_lvls <- c(
 
 genres <- factor(genres, levels = genre_lvls)
 original$Genre_F <- genres
+
+# Remove years that are probably inaccurate
+very_latest_years <- which(original$Year_release_n > 2016)
+original$Year_release_n[very_latest_years] <- NA
