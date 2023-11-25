@@ -6,6 +6,12 @@ date: "2023-11-19"
 
 Predicting global game sales by video game characteristics.
 
+An interesting model will showcase some underlying characteristics that could be
+unexpectedly linked to sale numbers. Of course, true precision, unexpected smash
+hits are very difficult to predict. However, this might shed light on some
+attributes that normally wouldn't even be considered - e.g. game title
+characteristics.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
