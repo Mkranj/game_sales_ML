@@ -138,7 +138,9 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
   # TODO missing za top perf treba biti F, za Rating i Genre other?
   step_impute_median(Year_release_n) |> 
   step_impute_mode(all_nominal()) |> 
-  step_dummy(all_factor_predictors())
+  step_dummy(all_factor_predictors()) |> 
+  step_center(all_numeric_predictors()) |> 
+  step_scale(all_numeric_predictors())
 
 # Postprocessing - can't be negative
 
