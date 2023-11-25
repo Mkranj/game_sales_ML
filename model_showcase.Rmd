@@ -49,27 +49,21 @@ table(game_names)[sample(1:length(game_names), 15)]
 ```
 ```{r}
 library(stringr)
-separator_colon <- stringr::str_detect(game_names, ": ")
-separator_line <- stringr::str_detect(game_names, " - ")
 
-# Count as having a subtitle if any match
-subtitled <- separator_colon | separator_line
-
-# Some names could have multiple subtitles! Is that even worse?
-colon_count <- stringr::str_count(game_names, ": ") 
+subtitles <- count_subtitles(game_names)
 
 # Making it into variables:
-games$subtitled_name <- subtitled
-games$subtitle_colon_count <- colon_count
+games$has_subtitle <- subtitles$subtitle_present
+games$subtitle_count <- subtitles$subtitle_count
 ```
 
 ```{r}
-by_subtitle <- group_by(games, subtitled_name) %>%
+by_subtitle <- group_by(games, has_subtitle) %>%
   summarise(avg = mean(Global_Sales), 
             std = sd(Global_Sales),
             no = n())
 
-no_subtitles <- group_by(games, subtitle_colon_count) %>%
+no_subtitles <- group_by(games, subtitle_count) %>%
   summarise(avg = mean(Global_Sales), 
             std = sd(Global_Sales),
             no = n())
@@ -132,7 +126,7 @@ Model definition
 ```{r}
 library(recipes)
 # Define variables to be used
-predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made")
+predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made", "has_subtitle", "subtitle_count")
 criterium <- "Global_Sales"
 
 model_formula <- paste0(criterium, " ~ ",
@@ -143,7 +137,8 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
 # Imputing missing values
   # TODO missing za top perf treba biti F, za Rating i Genre other?
   step_impute_median(Year_release_n) |> 
-  step_impute_mode(all_nominal()) |> step_dummy(all_factor_predictors())
+  step_impute_mode(all_nominal()) |> 
+  step_dummy(all_factor_predictors())
 
 # Postprocessing - can't be negative
 
