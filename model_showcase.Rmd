@@ -4,6 +4,8 @@ output: html_document
 date: "2023-11-19"
 ---
 
+Predicting global game sales by video game characteristics.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -15,7 +17,7 @@ source("1_load.R")
 
 ```{r}
 library(ggplot2)
-ggplot(games, aes(x = NA_Sales)) + geom_histogram()
+ggplot(games, aes(x = Global_Sales)) + geom_histogram()
 ```
 
 Overview without extremes
@@ -23,14 +25,14 @@ Overview without extremes
 ```{r}
 
 ggplot(games %>% 
-         filter(NA_Sales < 2), 
-       aes(x = NA_Sales)) + geom_histogram()
+         filter(Global_Sales < 2), 
+       aes(x = Global_Sales)) + geom_histogram()
 ```
 ```{r}
 
 ggplot(games %>% 
-         filter(NA_Sales < 0.5), 
-       aes(x = NA_Sales)) + geom_histogram()
+         filter(Global_Sales < 0.5), 
+       aes(x = Global_Sales)) + geom_histogram()
 ```
 
 # Exploring game names
@@ -57,13 +59,13 @@ games$subtitle_colon_count <- colon_count
 
 ```{r}
 by_subtitle <- group_by(games, subtitled_name) %>%
-  summarise(avg = mean(NA_Sales), 
-            std = sd(NA_Sales),
+  summarise(avg = mean(Global_Sales), 
+            std = sd(Global_Sales),
             no = n())
 
 no_subtitles <- group_by(games, subtitle_colon_count) %>%
-  summarise(avg = mean(NA_Sales), 
-            std = sd(NA_Sales),
+  summarise(avg = mean(Global_Sales), 
+            std = sd(Global_Sales),
             no = n())
 
 # Actually BOTH hold!!!
@@ -73,12 +75,10 @@ print(no_subtitles)
 
 
 # Modelling
+Criterium: Global sales
 
 Training-testing split
 ```{r}
-# Only check those that HAVE been sold in NA
-games <- filter(games, NA_Sales > 0)
-
 tt_split <- initial_split(games)
 
 tt_training <- training(tt_split)
@@ -137,7 +137,7 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
 # Imputing missing values
   # TODO missing za top perf treba biti F, za Rating i Genre other?
   step_impute_median(Year_release_n) |> 
-  step_impute_mode(all_nominal())
+  step_impute_mode(all_nominal()) |> step_dummy(all_factor_predictors())
 
 # Postprocessing - can't be negative
 
