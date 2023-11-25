@@ -15,7 +15,7 @@ games <- group_by(original, Name) %>%
   summarise(
     Platform = paste(Platform, collapse = "; "),
     # If there are multiple release years for multiple editions, count the earliest.
-    Year_of_Release = min(Year_of_Release),
+    Year_release_n = min(Year_release_n),
     Genre = Genre[1],
     Publisher = Publisher[1],
     # For copies sold, sum across editions
@@ -27,15 +27,15 @@ games <- group_by(original, Name) %>%
 
 # Factors
 rating_main_categories <- c("E", "E10+", "M", "T")
-categorised_ratings <- original$Rating
+categorised_ratings <- games$Rating
 categorised_ratings[!categorised_ratings %in% rating_main_categories] <- "Other"
 
 categories_f_lvls <- c(rating_main_categories, "Other")
 categorised_ratings <- factor(categorised_ratings, levels = categories_f_lvls)
-original$Rating_F <- categorised_ratings
+games$Rating_F <- categorised_ratings
 
 # Misc and missing should be other
-genres <- original$Genre
+genres <- games$Genre
 genre_types <- unique(genres)
 
 
@@ -49,8 +49,8 @@ genre_lvls <- c(
   )
 
 genres <- factor(genres, levels = genre_lvls)
-original$Genre_F <- genres
+games$Genre_F <- genres
 
-# Remove years that are probably inaccurate
-very_latest_years <- which(original$Year_release_n > 2016)
-original$Year_release_n[very_latest_years] <- NA
+# Remove years that are probably inaccurate - dataset from 2016
+very_latest_years <- which(games$Year_release_n > 2016)
+games$Year_release_n[very_latest_years] <- NA

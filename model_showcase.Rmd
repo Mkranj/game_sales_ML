@@ -15,35 +15,30 @@ source("1_load.R")
 
 ```{r}
 library(ggplot2)
-ggplot(original, aes(x = NA_Sales)) + geom_histogram()
+ggplot(games, aes(x = NA_Sales)) + geom_histogram()
 ```
 
 Overview without extremes
 
 ```{r}
 
-ggplot(original %>% 
+ggplot(games %>% 
          filter(NA_Sales < 2), 
        aes(x = NA_Sales)) + geom_histogram()
 ```
 ```{r}
 
-ggplot(original %>% 
+ggplot(games %>% 
          filter(NA_Sales < 0.5), 
        aes(x = NA_Sales)) + geom_histogram()
 ```
 
 # Exploring game names
 ```{r}
-game_names <- original$Name
+game_names <- games$Name
 table(game_names)[sample(1:length(game_names), 15)]
 # Games with same name on multiple consoles counted as two!!!
 ```
-Ideas:
-summarise by game name + dev combo,
-sum sales
-variable: No. of consoles released on
-
 ```{r}
 library(stringr)
 separator_colon <- stringr::str_detect(game_names, ": ")
@@ -56,17 +51,17 @@ subtitled <- separator_colon | separator_line
 colon_count <- stringr::str_count(game_names, ": ") 
 
 # Making it into variables:
-original$subtitled_name <- subtitled
-original$subtitle_colon_count <- colon_count
+games$subtitled_name <- subtitled
+games$subtitle_colon_count <- colon_count
 ```
 
 ```{r}
-by_subtitle <- group_by(original, subtitled_name) %>%
+by_subtitle <- group_by(games, subtitled_name) %>%
   summarise(avg = mean(NA_Sales), 
             std = sd(NA_Sales),
             no = n())
 
-no_subtitles <- group_by(original, subtitle_colon_count) %>%
+no_subtitles <- group_by(games, subtitle_colon_count) %>%
   summarise(avg = mean(NA_Sales), 
             std = sd(NA_Sales),
             no = n())
@@ -81,7 +76,7 @@ print(no_subtitles)
 
 Training-testing split
 ```{r}
-tt_split <- initial_split(original)
+tt_split <- initial_split(games)
 
 tt_training <- training(tt_split)
 tt_testing <- testing(tt_split)

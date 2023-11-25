@@ -1,4 +1,4 @@
-tt_split <- initial_split(original)
+tt_split <- initial_split(games)
 
 tt_training <- training(tt_split)
 tt_testing <- testing(tt_split)
