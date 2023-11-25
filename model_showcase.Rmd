@@ -76,6 +76,9 @@ print(no_subtitles)
 
 Training-testing split
 ```{r}
+# Only check those that HAVE been sold in NA
+games <- filter(games, NA_Sales > 0)
+
 tt_split <- initial_split(games)
 
 tt_training <- training(tt_split)
