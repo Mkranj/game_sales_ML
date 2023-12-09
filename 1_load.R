@@ -22,7 +22,8 @@ games <- group_by(original, Name) %>%
     NA_Sales = sum(NA_Sales, na.rm = T),
     Global_Sales = sum(Global_Sales, na.rm = T),
     Developer = Developer[1],
-    Rating = Rating[1]
+    Rating = Rating[1],
+    Consoles_no = n()
   )
 
 # Factors
