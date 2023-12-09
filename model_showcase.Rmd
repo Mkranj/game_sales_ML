@@ -41,6 +41,21 @@ ggplot(games %>%
          filter(Global_Sales < 0.5), 
        aes(x = Global_Sales)) + geom_histogram()
 ```
+# Sales and number of consoles released on
+```{r}
+sales_by_cons_no <- group_by(games, Consoles_no) %>%
+  summarise(average = mean(Global_Sales),
+            count = n()
+  ) %>%
+  mutate(average_per_console = average/Consoles_no)
+
+ggplot(sales_by_cons_no, aes(x = Consoles_no, y = average)) +
+  geom_point(aes(size = count)) + scale_x_continuous(breaks = 1:20)
+
+ggplot(sales_by_cons_no, aes(x = Consoles_no, y = average_per_console)) + geom_point(aes(size = count)) + scale_x_continuous(breaks = 1:20)
+# Not linear - polynomial might helps predictions
+```
+
 
 # Exploring game names
 ```{r}
