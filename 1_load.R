@@ -54,3 +54,15 @@ games$Genre_F <- genres
 # Remove years that are probably inaccurate - dataset from 2016
 very_latest_years <- which(games$Year_release_n > 2016)
 games$Year_release_n[very_latest_years] <- NA
+
+# Dummy variables for consoles
+consoles <- table(original$Platform)
+
+# Make a table - we'll take 6 largest consoles as features and the rest as Other
+consoles <- data.frame(
+  console = names(consoles),
+  count = as.vector(consoles)
+) %>% arrange(desc(count))
+
+main_consoles <- consoles$console[1:8]
+other_consoles <- setdiff(consoles$console, main_consoles)
