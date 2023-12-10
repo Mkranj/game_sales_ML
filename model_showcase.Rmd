@@ -59,13 +59,6 @@ ggplot(sales_by_cons_no, aes(x = Consoles_no, y = average_per_console)) + geom_p
 
 # Exploring game names
 ```{r}
-game_names <- games$Name
-table(game_names)[sample(1:length(game_names), 15)]
-# Games with same name on multiple consoles counted as two!!!
-```
-```{r}
-library(stringr)
-
 subtitles <- count_subtitles(game_names)
 
 # Making it into variables:
