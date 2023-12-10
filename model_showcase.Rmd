@@ -150,7 +150,7 @@ Model definition
 ```{r}
 library(recipes)
 # Define variables to be used
-predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made", "has_subtitle", "subtitle_count")
+predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made", "has_subtitle", "subtitle_count", console_colnames, "Consoles_no")
 criterium <- "Global_Sales"
 
 model_formula <- paste0(criterium, " ~ ",
