@@ -163,6 +163,7 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
   step_impute_median(Year_release_n) |> 
   step_impute_mode(all_nominal()) |> 
   step_dummy(all_factor_predictors()) |> 
+  step_poly(Consoles_no, degree = 2) |>
   step_center(all_numeric_predictors()) |> 
   step_scale(all_numeric_predictors())
 
