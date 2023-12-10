@@ -67,3 +67,11 @@ consoles <- data.frame(
 
 main_consoles <- consoles$console[1:8]
 other_consoles <- setdiff(consoles$console, main_consoles)
+
+# Set up new columns for being released on specific console
+console_colnames <- paste0("console_", main_consoles)
+console_colnames <- c(console_colnames, "console_other")
+
+for (i in 1:length(console_colnames)) {
+  games[, console_colnames[i]] <- NA
+}
