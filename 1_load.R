@@ -79,10 +79,12 @@ for (i in 1:length(console_colnames)) {
 
 # Detect whether specific platform appears in the pasted-together column
 
+# DS would get recognised by 3DS. So the start needs to be string-start or space
+starting <- "(?<=^| )"
 # PS would get matched by PS5. We want to count a console if it's followed by
 # ; or end-of-string
 ending <- "(?:;|$)"
-main_console_regex <- paste0(main_consoles, ending)
+main_console_regex <- paste0(starting, main_consoles, ending)
 
 for (i in 1:length(main_consoles)) {
   games[console_colnames[i]] <- str_detect(games$Platform,
@@ -92,7 +94,7 @@ for (i in 1:length(main_consoles)) {
 # And detect if any of "other" consoles present in list
 games$console_other <- F
 
-other_consoles_regex <- paste0(other_consoles, ending)
+other_consoles_regex <- paste0(starting, other_consoles, ending)
 
 other_consoles_detected <- lapply(other_consoles_regex, function(console) {
   str_detect(games$Platform,
