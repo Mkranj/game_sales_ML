@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidymodels)
+library(stringr)
 
 source("prep_functions.R")
 set.seed(1233)
@@ -74,4 +75,16 @@ console_colnames <- c(console_colnames, "console_other")
 
 for (i in 1:length(console_colnames)) {
   games[, console_colnames[i]] <- NA
+}
+
+# Detect whether specific platform appears in the pasted-together column
+
+# PS would get matched by PS5. We want to count a console if it's followed by
+# ; or end-of-string
+ending <- "(?:;|$)"
+main_console_regex <- paste0(main_consoles, ending)
+
+for (i in 1:length(main_consoles)) {
+  games[console_colnames[i]] <- str_detect(games$Platform,
+                                           main_console_regex[i])
 }
