@@ -88,3 +88,28 @@ for (i in 1:length(main_consoles)) {
   games[console_colnames[i]] <- str_detect(games$Platform,
                                            main_console_regex[i])
 }
+
+# And detect if any of "other" consoles present in list
+games$console_other <- F
+
+other_consoles_regex <- paste0(other_consoles, ending)
+
+other_consoles_detected <- lapply(other_consoles_regex, function(console) {
+  str_detect(games$Platform,
+             console)
+})
+
+# We get a list for each console. If a specific index is TRUE for any list member,
+# console_other should be true
+n_games <- nrow(games)
+released_on_other <- NULL
+
+for (i in 1:n_games) {
+  any_true <- map_lgl(other_consoles_detected, function(console) {
+    console[i]
+  }) %>% any()
+  
+  released_on_other <- c(released_on_other, any_true)
+}
+
+games$console_other <- released_on_other
