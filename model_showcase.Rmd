@@ -90,37 +90,11 @@ print(no_subtitles)
 ```
 ## By console
 ```{r}
-group_by(games, console_PS2) %>% summarise(avg = mean(Global_Sales), 
+for (console in console_colnames) {
+  group_by(games, .data[[console]]) %>% summarise(avg = mean(Global_Sales), 
             std = sd(Global_Sales),
-            no = n())
-
-group_by(games, console_DS) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-
-group_by(games, console_PS3) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-
-group_by(games, console_Wii) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-group_by(games, console_X360) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-group_by(games, console_PSP) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-group_by(games, console_PS) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-group_by(games, console_PC) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-group_by(games, console_other) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
-            no = n())
-
+            no = n()) %>% print()
+}
 ```
 
 
