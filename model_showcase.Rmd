@@ -59,6 +59,7 @@ ggplot(sales_by_cons_no, aes(x = Consoles_no, y = average_per_console)) + geom_p
 
 # Exploring game names
 ```{r}
+game_names <- games$Name
 subtitles <- count_subtitles(game_names)
 
 # Making it into variables:
