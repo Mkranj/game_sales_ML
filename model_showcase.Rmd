@@ -109,6 +109,34 @@ Feature engineering
 
 ```{r}
 dev_summary <- calculate_dev_summaries(tt_training)
+head(dev_summary)
+```
+
+```{r}
+# Join games' dev avg_income and games made total
+
+# Special object for joining, just adjust variable names to start with dev_
+devs_join <- dev_summary %>%
+  rename_with( ~ paste0("dev_", .x))
+
+tt_training <- left_join(tt_training, devs_join, by = c("Developer" = "dev_Developer"))
+tt_testing <- left_join(tt_testing, devs_join, by = c("Developer" = "dev_Developer"))
+```
+
+Visualisation of sales by dev characteristics
+```{r}
+ggplot(tt_training, aes(x = dev_avg_income, y = Global_Sales)) + geom_point() +
+  geom_smooth()
+
+
+ggplot(tt_training, aes(x = dev_no_games, y = Global_Sales)) + geom_point() +
+  geom_smooth()
+```
+Average income correlates with global sales, of course. Number of games made not so much.
+
+```{r}
+# Is the game developed by a dev that's top 10 by income, or by
+# amount of games made?
 
 tt_training$Top_performer_dev <- 
   mark_top_performer_dev(input_df = tt_training,
