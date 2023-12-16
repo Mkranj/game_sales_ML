@@ -92,20 +92,33 @@ print(by_subtitle)
 print(no_subtitles)
 ```
 Detect unusual titles  
-Those with non-alphanumeric symbols
+Those with non-alphanumeric symbols - count how many there are
 ```{r}
-games$unusual_title_symbol <- games$Name %>% mark_unusual_titles()
+games$unusual_title_symbols <- games$Name %>% count_unusual_symbols()
 ```
 
 ```{r}
-unusual_titles <- group_by(games, unusual_title_symbol) %>%
+unusual_titles <- group_by(games, unusual_title_symbols) %>%
   summarise(avg = mean(Global_Sales), 
             std = sd(Global_Sales),
             no = n())
 
 unusual_titles 
 ```
-This does appear to lower sales.
+
+```{r}
+ggplot_discrete_polynomials(games, 
+                            "unusual_title_symbols", "Global_Sales",
+                            poly_degree = 1)
+ggplot_discrete_polynomials(games, 
+                            "unusual_title_symbols", "Global_Sales",
+                            poly_degree = 2)
+ggplot_discrete_polynomials(games, 
+                            "unusual_title_symbols", "Global_Sales",
+                            poly_degree = 3)
+```
+
+This does appear to lower sales. One degree should be enough.
 
 ## By console
 ```{r}
@@ -220,10 +233,10 @@ Model definition
 library(recipes)
 # Define variables to be used
 predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income",  "subtitle_count",
-                console_colnames, "Consoles_no", "unusual_title_symbol")
+                console_colnames, "Consoles_no", "unusual_title_symbols")
 criterium <- "Global_Sales"
 
-predictors_to_center <- c("Year_release_n", "dev_avg_income")
+predictors_to_center <- c("Year_release_n", "dev_avg_income", "unusual_title_symbols")
 
 model_formula <- paste0(criterium, " ~ ",
                         paste(predictors, collapse = " + ")) |> 

@@ -31,7 +31,7 @@ missing_to_zero <- function(dataset, column_name) {
   data
 }
 
-mark_unusual_titles <- function(game_names) {
+count_unusual_symbols <- function(game_names) {
   # Unusual: every non-letter, non-digit. Except spaces and : and - used
   # for detecting subtitles
   unusual_characters <- "[^a-z\\d :-]"
@@ -39,5 +39,5 @@ mark_unusual_titles <- function(game_names) {
   # Treat titles as all lowercase for simplicity
   titles <- game_names %>% tolower()
   
-  str_detect(titles, pattern = unusual_characters)
+  str_count(titles, pattern = unusual_characters)
 }
