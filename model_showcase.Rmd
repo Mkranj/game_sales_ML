@@ -220,7 +220,7 @@ Model definition
 library(recipes)
 # Define variables to be used
 predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income",  "subtitle_count",
-                console_colnames, "Consoles_no")
+                console_colnames, "Consoles_no", "unusual_title_symbol")
 criterium <- "Global_Sales"
 
 predictors_to_center <- c("Year_release_n", "dev_avg_income")
