@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 source("1_load.R")
 source("feature_engineering_fn.R")
+source("post_process_fn.R")
 ```
 # Visualisations
 
@@ -191,7 +192,8 @@ training_results <- tt_testing |>
   #select(Global_Sales) |> 
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
-  )
+  ) |>
+  adjust_negative_preds()
 
 # show that all the preprocessing steps are applied to the testing data too
 # (at predict() stage)
@@ -207,7 +209,8 @@ prep(model_recipe) %>%
   bake(new_data = tt_testing) %>%
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
-  )
+  ) |>
+  adjust_negative_preds()
 ```
 
 
