@@ -203,7 +203,7 @@ Model definition
 ```{r}
 library(recipes)
 # Define variables to be used
-predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income", "has_subtitle", "subtitle_count",
+predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income",  "subtitle_count",
                 console_colnames, "Consoles_no")
 criterium <- "Global_Sales"
 
