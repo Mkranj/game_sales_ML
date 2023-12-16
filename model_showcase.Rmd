@@ -123,6 +123,20 @@ tt_training <- left_join(tt_training, devs_join, by = c("Developer" = "dev_Devel
 tt_testing <- left_join(tt_testing, devs_join, by = c("Developer" = "dev_Developer"))
 ```
 
+```{r}
+# ADJUSTMENT
+# if developers are not recognised, set avg_sales and games made to zero!
+# Seems more sensical than using the median to imput - if the dev team is
+# small, they should get lower values here
+
+tt_training <- tt_training %>% missing_to_zero("dev_avg_income")
+tt_training <- tt_training %>% missing_to_zero("dev_no_games")
+
+tt_testing <- tt_testing %>% missing_to_zero("dev_avg_income")
+tt_testing <- tt_testing %>% missing_to_zero("dev_no_games")
+```
+
+
 Visualisation of sales by dev characteristics
 ```{r}
 ggplot(tt_training, aes(x = dev_avg_income, y = Global_Sales)) + geom_point() +
@@ -137,6 +151,8 @@ Average income correlates with global sales, of course. Number of games made not
 ```{r}
 # Is the game developed by a dev that's top 10 by income, or by
 # amount of games made?
+
+# NOT USED IN MODEL ANYMORE
 
 tt_training$Top_performer_dev <- 
   mark_top_performer_dev(input_df = tt_training,
