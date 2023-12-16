@@ -214,8 +214,6 @@ model_formula <- paste0(criterium, " ~ ",
   formula()
 
 model_recipe <- recipe(model_formula, data = tt_training) |> 
-# Imputing missing values
-  # TODO missing za top perf treba biti F, za Rating i Genre other?
   step_impute_median(Year_release_n) |> 
   step_impute_mode(all_nominal()) |> 
   step_dummy(all_factor_predictors()) |> 
