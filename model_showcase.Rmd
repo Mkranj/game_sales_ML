@@ -138,14 +138,24 @@ tt_testing$Dev_games_made <-
   as.factor()
 ```
 
+Squared number of Consoles released on
+```{r}
+tt_training$Consoles_no_sq <- tt_training$Consoles_no ** 2
+tt_testing$Consoles_no_sq <- tt_testing$Consoles_no ** 2
+```
+
 
 Model definition
 
 ```{r}
 library(recipes)
 # Define variables to be used
-predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made", "has_subtitle", "subtitle_count", console_colnames, "Consoles_no")
+predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev",
+                "Dev_games_made", "has_subtitle", "subtitle_count",
+                console_colnames, "Consoles_no", "Consoles_no_sq")
 criterium <- "Global_Sales"
+
+predictors_to_center <- c("Year_release_n", "Consoles_no", "Consoles_no_sq")
 
 model_formula <- paste0(criterium, " ~ ",
                         paste(predictors, collapse = " + ")) |> 
@@ -157,9 +167,8 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
   step_impute_median(Year_release_n) |> 
   step_impute_mode(all_nominal()) |> 
   step_dummy(all_factor_predictors()) |> 
-  step_poly(Consoles_no, degree = 2) |>
-  step_center(all_numeric_predictors()) |> 
-  step_scale(all_numeric_predictors())
+  step_center(predictors_to_center) |> 
+  step_scale(predictors_to_center)
 
 # Postprocessing - can't be negative
 
@@ -191,6 +200,16 @@ training_results <- tt_testing |>
 training_results |> metrics(truth = Global_Sales, estimate = .pred)
 
 ```
+
+Testing data with augmented features
+```{r}
+prep(model_recipe) %>%
+  bake(new_data = tt_testing) %>%
+  bind_cols(
+    predict(fitted_model, new_data = tt_testing[, predictors])
+  )
+```
+
 
 Historic:
 "Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made"
