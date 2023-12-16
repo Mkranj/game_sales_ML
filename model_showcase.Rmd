@@ -179,12 +179,11 @@ Model definition
 ```{r}
 library(recipes)
 # Define variables to be used
-predictors <- c("Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev",
-                "Dev_games_made", "has_subtitle", "subtitle_count",
+predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income", "has_subtitle", "subtitle_count",
                 console_colnames, "Consoles_no", "Consoles_no_sq")
 criterium <- "Global_Sales"
 
-predictors_to_center <- c("Year_release_n", "Consoles_no", "Consoles_no_sq")
+predictors_to_center <- c("Year_release_n", "Consoles_no", "Consoles_no_sq", "dev_avg_income")
 
 model_formula <- paste0(criterium, " ~ ",
                         paste(predictors, collapse = " + ")) |> 
