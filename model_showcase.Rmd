@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 source("1_load.R")
 source("feature_engineering_fn.R")
 source("post_process_fn.R")
+source("visualisation_fn.R")
 ```
 # Visualisations
 
@@ -59,18 +60,10 @@ ggplot(sales_by_cons_no, aes(x = Consoles_no, y = average_per_console)) + geom_p
 ```{r}
 # Draw a smooth line considering all points, and polyinomial of a given level.
 # Summary "dots" in the background for easier viewing
-ggplot(games, aes(x = Consoles_no, y = Global_Sales)) +
-  geom_point(data = sales_by_cons_no, aes(y = average, size = count)) + 
-  geom_smooth(method='lm', formula = y ~ poly(x, 1))
 
-ggplot(games, aes(x = Consoles_no, y = Global_Sales)) +
-  geom_point(data = sales_by_cons_no, aes(y = average, size = count)) + 
-  geom_smooth(method='lm', formula = y ~ poly(x, 2))
-
-
-ggplot(games, aes(x = Consoles_no, y = Global_Sales)) +
-  geom_point(data = sales_by_cons_no, aes(y = average, size = count)) + 
-  geom_smooth(method='lm', formula = y ~ poly(x, 3))
+ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales", poly_degree = 1)
+ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales", poly_degree = 2)
+ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales", poly_degree = 3)
 ```
 
 # Exploring game names
