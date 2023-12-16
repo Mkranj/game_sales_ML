@@ -91,6 +91,22 @@ no_subtitles <- group_by(games, subtitle_count) %>%
 print(by_subtitle)
 print(no_subtitles)
 ```
+Detect unusual titles  
+Those with non-alphanumeric symbols
+```{r}
+games$unusual_title_symbol <- games$Name %>% mark_unusual_titles()
+```
+
+```{r}
+unusual_titles <- group_by(games, unusual_title_symbol) %>%
+  summarise(avg = mean(Global_Sales), 
+            std = sd(Global_Sales),
+            no = n())
+
+unusual_titles 
+```
+This does appear to lower sales.
+
 ## By console
 ```{r}
 for (console in console_colnames) {
