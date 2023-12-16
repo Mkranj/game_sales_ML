@@ -204,10 +204,10 @@ Model definition
 library(recipes)
 # Define variables to be used
 predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income", "has_subtitle", "subtitle_count",
-                console_colnames, "Consoles_no", "Consoles_no_sq")
+                console_colnames, "Consoles_no")
 criterium <- "Global_Sales"
 
-predictors_to_center <- c("Year_release_n", "Consoles_no", "Consoles_no_sq", "dev_avg_income")
+predictors_to_center <- c("Year_release_n", "dev_avg_income")
 
 model_formula <- paste0(criterium, " ~ ",
                         paste(predictors, collapse = " + ")) |> 
@@ -219,8 +219,10 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
   step_impute_median(Year_release_n) |> 
   step_impute_mode(all_nominal()) |> 
   step_dummy(all_factor_predictors()) |> 
-  step_center(predictors_to_center) |> 
-  step_scale(predictors_to_center)
+  step_poly(Consoles_no, degree = 2) |>
+  step_poly(subtitle_count, degree = 2) |>
+  step_center(predictors_to_center, starts_with(c("Consoles_no", "subtitle_count"))) |> 
+  step_scale(predictors_to_center, starts_with(c("Consoles_no", "subtitle_count")))
 
 # Postprocessing - can't be negative
 
@@ -233,6 +235,7 @@ Fit model
 model_workflow <- workflow() |>
   add_model(linear_model) |> 
   add_recipe(model_recipe)
+
 fitted_model <- model_workflow |> fit(tt_training)
 
 # Metrics
