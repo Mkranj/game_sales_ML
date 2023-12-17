@@ -123,10 +123,33 @@ ggplot_discrete_polynomials(games,
 
 This does appear to lower sales. One degree should be enough.
 
+Title wordcount
 ```{r}
-
+ggplot_discrete_polynomials(games, "Title_words", "Global_Sales", 1)
 ```
+Title length
+```{r}
+ggplot_discrete_polynomials(games, "Title_length", "Global_Sales", 1)
+ggplot_discrete_polynomials(games, "Title_length", "Global_Sales", 2)
+```
+Second level polynomial could be useful
 
+Interaction of wordcount and length
+```{r}
+ggplot(games, aes(x = Title_length, y = Title_words)) +
+  geom_jitter(
+    aes(color = Global_Sales),
+    # Amount to jitter the points for better overview
+    width = 0.2, height = 0.4)
+
+ggplot(games, aes(x = Title_length, y = Title_words)) +
+  geom_jitter(
+    aes(color = log(Global_Sales))
+    # Amount to jitter the points for better overview
+    #,width = 0.2, height = 0.4
+    )
+```
+It's hard to see a pattern, interaction probably wouldn't increase prediction accuraccy.
 
 ## By console
 ```{r}
