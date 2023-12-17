@@ -312,10 +312,6 @@ training_results <- tt_testing |>
   ) |>
   adjust_negative_preds()
 
-# show that all the preprocessing steps are applied to the testing data too
-# (at predict() stage)
-#prep(model_recipe) |>  bake(new_data = tt_testing)
-
 training_results |> metrics(truth = Global_Sales, estimate = .pred)
 
 ```
