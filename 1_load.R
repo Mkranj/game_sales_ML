@@ -123,3 +123,8 @@ games$Name <- trimws(games$Name)
 
 games <- filter(games,
                 Name != "") 
+
+# Titles lenght: word count and character count
+
+games$Title_words <- count_words(games$Name)
+games$Title_length <- str_length(games$Name)
