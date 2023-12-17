@@ -119,3 +119,7 @@ games$console_other <- released_on_other
 
 # Names - remove starting whitespace present for some games
 games$Name <- trimws(games$Name)
+
+
+games <- filter(games,
+                Name != "") 
