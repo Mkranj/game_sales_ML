@@ -41,3 +41,9 @@ count_unusual_symbols <- function(game_names) {
   
   str_count(titles, pattern = unusual_characters)
 }
+
+count_words <- function(game_names) {
+  space <- " "
+  
+  str_count(game_names, pattern = space) + 1
+}

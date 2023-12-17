@@ -17,11 +17,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-source("1_load.R")
 source("feature_engineering_fn.R")
 source("post_process_fn.R")
 source("visualisation_fn.R")
 ```
+```{r}
+source("1_load.R")
+```
+
 # Visualisations
 
 ```{r}
@@ -119,6 +122,11 @@ ggplot_discrete_polynomials(games,
 ```
 
 This does appear to lower sales. One degree should be enough.
+
+```{r}
+
+```
+
 
 ## By console
 ```{r}
@@ -253,7 +261,7 @@ model_recipe <- recipe(model_formula, data = tt_training) |>
 
 # Postprocessing - can't be negative
 
-linear_model <- linear_reg()
+linear_model <- rand_forest(mode = "regression")
 ```
 
 Fit model
