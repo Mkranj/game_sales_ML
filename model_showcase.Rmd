@@ -329,14 +329,3 @@ prep(model_recipe) %>%
   ) |>
   adjust_negative_preds()
 ```
-
-
-Historic:
-"Year_release_n", "Genre_F", "Rating_F", "Top_performer_dev", "Dev_games_made"
-linear model
-rsq 18.9%
-mae 0.56
-
-random forest
-rsq 29%
-mae 0.53
