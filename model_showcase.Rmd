@@ -46,6 +46,12 @@ ggplot(games %>%
          filter(Global_Sales < 0.5), 
        aes(x = Global_Sales)) + geom_histogram()
 ```
+By years of release
+```{r}
+ggplot_discrete_polynomials(games, "Year_release_n", "Global_Sales")
+```
+
+
 # Sales and number of consoles released on
 ```{r}
 sales_by_cons_no <- group_by(games, Consoles_no) %>%
