@@ -377,7 +377,7 @@ if (best_model == "linear") {
   print("Best performing model: Linear regression.")
   print(paste0("MAE: ", models_perfomance$mae[[best_performance]]))
 } else if (best_model == "rf") {
-  final_workflow <- model_workflow_linear
+  final_workflow <- model_workflow_rf
   print("Best performing model: Random forest.")
   print(paste0("MAE: ", models_perfomance$mae[[best_performance]]))
 } 
@@ -412,7 +412,7 @@ training_results %>%
 ```
 
 
-Testing data with augmented features
+Preview of testing data with augmented features
 ```{r}
 prep(model_recipe) %>%
   bake(new_data = tt_testing) %>%
