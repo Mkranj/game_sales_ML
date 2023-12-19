@@ -56,11 +56,15 @@ By years of release
 ggplot_discrete_polynomials(games, "Year_release_n", "Global_Sales")
 ```
 
+```{r}
+games$Global_Sales_log <- log10(games$Global_Sales)
+```
+
 
 # Sales and number of consoles released on
 ```{r}
 sales_by_cons_no <- group_by(games, Consoles_no) %>%
-  summarise(average = mean(Global_Sales),
+  summarise(average = mean(Global_Sales_log),
             count = n()
   ) %>%
   mutate(average_per_console = average/Consoles_no)
@@ -75,9 +79,9 @@ ggplot(sales_by_cons_no, aes(x = Consoles_no, y = average_per_console)) + geom_p
 # Draw a smooth line considering all points, and polyinomial of a given level.
 # Summary "dots" in the background for easier viewing
 
-ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales", poly_degree = 1)
-ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales", poly_degree = 2)
-ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales", poly_degree = 3)
+ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales_log", poly_degree = 1)
+ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales_log", poly_degree = 2)
+ggplot_discrete_polynomials(games, "Consoles_no", "Global_Sales_log", poly_degree = 3)
 ```
 
 # Exploring game names
@@ -92,13 +96,13 @@ games$subtitle_count <- subtitles$subtitle_count
 
 ```{r}
 by_subtitle <- group_by(games, has_subtitle) %>%
-  summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
+  summarise(avg = mean(Global_Sales_log), 
+            std = sd(Global_Sales_log),
             no = n())
 
 no_subtitles <- group_by(games, subtitle_count) %>%
-  summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
+  summarise(avg = mean(Global_Sales_log), 
+            std = sd(Global_Sales_log),
             no = n())
 
 # Actually BOTH hold!!!
@@ -113,8 +117,8 @@ games$unusual_title_symbols <- games$Name %>% count_unusual_symbols()
 
 ```{r}
 unusual_titles <- group_by(games, unusual_title_symbols) %>%
-  summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
+  summarise(avg = mean(Global_Sales_log), 
+            std = sd(Global_Sales_log),
             no = n())
 
 unusual_titles 
@@ -122,13 +126,13 @@ unusual_titles
 
 ```{r}
 ggplot_discrete_polynomials(games, 
-                            "unusual_title_symbols", "Global_Sales",
+                            "unusual_title_symbols", "Global_Sales_log",
                             poly_degree = 1)
 ggplot_discrete_polynomials(games, 
-                            "unusual_title_symbols", "Global_Sales",
+                            "unusual_title_symbols", "Global_Sales_log",
                             poly_degree = 2)
 ggplot_discrete_polynomials(games, 
-                            "unusual_title_symbols", "Global_Sales",
+                            "unusual_title_symbols", "Global_Sales_log",
                             poly_degree = 3)
 ```
 
@@ -136,12 +140,12 @@ This does appear to lower sales. One degree should be enough.
 
 Title wordcount
 ```{r}
-ggplot_discrete_polynomials(games, "Title_words", "Global_Sales", 1)
+ggplot_discrete_polynomials(games, "Title_words", "Global_Sales_log", 1)
 ```
 Title length
 ```{r}
-ggplot_discrete_polynomials(games, "Title_length", "Global_Sales", 1)
-ggplot_discrete_polynomials(games, "Title_length", "Global_Sales", 2)
+ggplot_discrete_polynomials(games, "Title_length", "Global_Sales_log", 1)
+ggplot_discrete_polynomials(games, "Title_length", "Global_Sales_log", 2)
 ```
 Second level polynomial could be useful
 
@@ -149,24 +153,17 @@ Interaction of wordcount and length
 ```{r}
 ggplot(games, aes(x = Title_length, y = Title_words)) +
   geom_jitter(
-    aes(color = Global_Sales),
+    aes(color = Global_Sales_log),
     # Amount to jitter the points for better overview
     width = 0.2, height = 0.4)
-
-ggplot(games, aes(x = Title_length, y = Title_words)) +
-  geom_jitter(
-    aes(color = log(Global_Sales))
-    # Amount to jitter the points for better overview
-    #,width = 0.2, height = 0.4
-    )
 ```
 It's hard to see a pattern, interaction probably wouldn't increase prediction accuraccy.
 
 ## By console
 ```{r}
 for (console in console_colnames) {
-  group_by(games, .data[[console]]) %>% summarise(avg = mean(Global_Sales), 
-            std = sd(Global_Sales),
+  group_by(games, .data[[console]]) %>% summarise(avg = mean(Global_Sales_log), 
+            std = sd(Global_Sales_log),
             no = n()) %>% print()
 }
 ```
@@ -218,11 +215,11 @@ tt_testing <- tt_testing %>% missing_to_zero("dev_no_games")
 
 Visualisation of sales by dev characteristics
 ```{r}
-ggplot(tt_training, aes(x = dev_avg_income, y = Global_Sales)) + geom_point() +
+ggplot(tt_training, aes(x = dev_avg_income, y = Global_Sales_log)) + geom_point() +
   geom_smooth()
 
 
-ggplot(tt_training, aes(x = dev_no_games, y = Global_Sales)) + geom_point() +
+ggplot(tt_training, aes(x = dev_no_games, y = Global_Sales_log)) + geom_point() +
   geom_smooth()
 ```
 Average income correlates with global sales, of course. Number of games made not so much.
@@ -277,7 +274,7 @@ library(recipes)
 predictors <- c("Year_release_n", "Genre_F", "Rating_F", "dev_avg_income",  "subtitle_count",
                 console_colnames, "Consoles_no", "unusual_title_symbols",
                 "Title_words", "Title_length")
-criterium <- "Global_Sales"
+criterium <- "Global_Sales_log"
 
 predictors_to_center <- c("Year_release_n", "dev_avg_income", "unusual_title_symbols", "Title_words", "Title_length")
 
@@ -317,13 +314,13 @@ fitted_model <- model_workflow |> fit(tt_training)
 
 
 training_results <- tt_testing |> 
-  #select(Global_Sales) |> 
+  #select(Global_Sales_log) |> 
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
   ) |>
   adjust_negative_preds()
 
-training_results |> metrics(truth = Global_Sales, estimate = .pred)
+training_results |> metrics(truth = Global_Sales_log, estimate = .pred)
 
 ```
 
