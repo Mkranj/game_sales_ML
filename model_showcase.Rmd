@@ -234,28 +234,28 @@ tt_training$Top_performer_dev <-
   mark_top_performer_dev(input_df = tt_training,
                          summarised_df = dev_summary,
                          summary_metric = "avg_income",
-                         n_top = 10) |> 
+                         n_top = 10) %>% 
   as.factor()
 
 tt_testing$Top_performer_dev <- 
   mark_top_performer_dev(input_df = tt_testing,
                          summarised_df = dev_summary,
                          summary_metric = "avg_income",
-                         n_top = 10) |> 
+                         n_top = 10) %>% 
   as.factor()
 
 tt_training$Dev_games_made <- 
   mark_top_performer_dev(input_df = tt_training,
                          summarised_df = dev_summary,
                          summary_metric = "no_games",
-                         n_top = 10) |> 
+                         n_top = 10) %>% 
   as.factor()
 
 tt_testing$Dev_games_made <- 
   mark_top_performer_dev(input_df = tt_testing,
                          summarised_df = dev_summary,
                          summary_metric = "no_games",
-                         n_top = 10) |> 
+                         n_top = 10) %>% 
   as.factor()
 ```
 
@@ -279,18 +279,18 @@ criterium <- "Global_Sales_log"
 predictors_to_center <- c("Year_release_n", "dev_avg_income", "unusual_title_symbols", "Title_words", "Title_length")
 
 model_formula <- paste0(criterium, " ~ ",
-                        paste(predictors, collapse = " + ")) |> 
+                        paste(predictors, collapse = " + ")) %>% 
   formula()
 
-model_recipe <- recipe(model_formula, data = tt_training) |> 
-  step_impute_median(Year_release_n) |> 
-  step_impute_mode(all_nominal()) |> 
-  step_dummy(all_factor_predictors()) |> 
-  step_poly(Consoles_no, degree = 2) |>
-  step_poly(subtitle_count, degree = 2) |>
+model_recipe <- recipe(model_formula, data = tt_training) %>% 
+  step_impute_median(Year_release_n) %>% 
+  step_impute_mode(all_nominal()) %>% 
+  step_dummy(all_factor_predictors()) %>% 
+  step_poly(Consoles_no, degree = 2) %>%
+  step_poly(subtitle_count, degree = 2) %>%
   step_center(predictors_to_center,
               starts_with(c("Consoles_no", "subtitle_count"))
-              ) |> 
+              ) %>% 
   step_scale(predictors_to_center,
              starts_with(c("Consoles_no", "subtitle_count"))
              )
@@ -303,26 +303,35 @@ linear_model <- linear_reg()
 Fit model
 
 ```{r}
-model_workflow <- workflow() |>
-  add_model(linear_model) |> 
+model_workflow <- workflow() %>%
+  add_model(linear_model) %>% 
   add_recipe(model_recipe)
 
-fitted_model <- model_workflow |> fit(tt_training)
+fitted_model <- model_workflow %>% fit(tt_training)
 
 # Metrics
 
 
 
-training_results <- tt_testing |> 
-  #select(Global_Sales_log) |> 
+training_results <- tt_testing %>% 
+  #select(Global_Sales_log) %>% 
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
-  ) |>
+  ) %>%
   adjust_negative_preds()
 
-training_results |> metrics(truth = Global_Sales_log, estimate = .pred)
+training_results %>% metrics(truth = Global_Sales_log, estimate = .pred)
 
 ```
+
+Metrics when back-transformed from log
+```{r}
+training_results %>%
+  # Transform predictions to actual number sold
+  mutate(pred_exp = 10 ** .pred) %>%
+  metrics(truth = Global_Sales, estimate = pred_exp)
+```
+
 
 Testing data with augmented features
 ```{r}
@@ -330,6 +339,6 @@ prep(model_recipe) %>%
   bake(new_data = tt_testing) %>%
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
-  ) |>
+  ) %>%
   adjust_negative_preds()
 ```
