@@ -402,13 +402,27 @@ training_results %>% metrics(truth = Global_Sales_log, estimate = .pred)
 
 Metrics when back-transformed from log
 ```{r}
-training_results %>%
+training_metrics <- training_results %>%
   # Transform predictions to actual number sold
   mutate(pred_exp = 10 ** .pred) %>%
   # Postprocessing: values can't be lower than 0
   # When transforming from logs: this actually cannot return 0s, so no
   # additional step needed.
   metrics(truth = Global_Sales, estimate = pred_exp)
+
+training_metrics
+```
+Ratio of rmse and standard deviation of target
+```{r}
+rmse_t <- training_metrics$.estimate[[1]] 
+sd_target <- sd(tt_testing$Global_Sales)
+ratio <- rmse_t / sd_target
+
+cat(paste0(
+  "RMSE: ", rmse_t,
+  "\nSD of global sales: ", sd_target,
+  "\nRatio of RMSE: ", round(ratio * 100, 2), "%"
+))
 ```
 
 
