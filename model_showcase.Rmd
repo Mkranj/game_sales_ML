@@ -302,6 +302,9 @@ model_recipe <- recipe(model_formula, data = tt_training) %>%
              )
 
 # Postprocessing - can't be negative
+# Currently can't integrate postprocessing with tidymodels workflow for
+# cross-validation, so none of the models will use it.
+# It will still be implemented on the final testing set results.
 ```
 
 Algorithms to consider
@@ -391,8 +394,7 @@ fitted_model <- final_workflow %>% fit(tt_training)
 training_results <- tt_testing %>% 
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
-  ) %>%
-  adjust_negative_preds()
+  )
 
 training_results %>% metrics(truth = Global_Sales_log, estimate = .pred)
 
@@ -403,6 +405,9 @@ Metrics when back-transformed from log
 training_results %>%
   # Transform predictions to actual number sold
   mutate(pred_exp = 10 ** .pred) %>%
+  # Postprocessing: values can't be lower than 0
+  # When transforming from logs: this actually cannot return 0s, so no
+  # additional step needed.
   metrics(truth = Global_Sales, estimate = pred_exp)
 ```
 
