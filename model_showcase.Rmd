@@ -35,7 +35,6 @@ ggplot(games, aes(x = Global_Sales)) + geom_histogram()
 Overview without extremes
 
 ```{r}
-
 ggplot(games %>% 
          filter(Global_Sales < 10000000), 
        aes(x = Global_Sales)) + geom_histogram()
@@ -46,6 +45,12 @@ ggplot(games %>%
          filter(Global_Sales < 1000000), 
        aes(x = Global_Sales)) + geom_histogram()
 ```
+Log transform sales
+```{r}
+ggplot(games, aes(x = log10(Global_Sales))) + geom_histogram()
+```
+Log transformed data looks much more normal. Let's use log transformation for our targets.
+
 By years of release
 ```{r}
 ggplot_discrete_polynomials(games, "Year_release_n", "Global_Sales")
