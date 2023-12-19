@@ -265,6 +265,12 @@ tt_training$Consoles_no_sq <- tt_training$Consoles_no ** 2
 tt_testing$Consoles_no_sq <- tt_testing$Consoles_no ** 2
 ```
 
+Cross validation for the training set
+```{r}
+set.seed(1234)
+tt_folds <- vfold_cv(tt_training, v = 10)
+```
+
 
 Model definition
 
@@ -296,18 +302,61 @@ model_recipe <- recipe(model_formula, data = tt_training) %>%
              )
 
 # Postprocessing - can't be negative
-
-linear_model <- linear_reg()
 ```
 
-Fit model
+Algorithms to consider
 
 ```{r}
-model_workflow <- workflow() %>%
+linear_model <- linear_reg()
+random_forest_model <- rand_forest(mode = "regression", engine = "ranger")
+svm_model <- svm_linear(mode = "regression", engine = "LiblineaR")
+```
+
+Fit models
+
+```{r}
+model_workflow_linear <- workflow() %>%
   add_model(linear_model) %>% 
   add_recipe(model_recipe)
 
-fitted_model <- model_workflow %>% fit(tt_training)
+fitted_cv <- fit_resamples(model_workflow_linear, tt_folds,
+                           metrics = metric_set(rmse, rsq, mae))
+
+# Get the averaged metrics for the 10fold CV
+metrics_folds_linear <- collect_metrics(fitted_cv)
+metrics_folds_linear
+```
+
+```{r}
+model_workflow_rf <- workflow() %>%
+  add_model(random_forest_model) %>% 
+  add_recipe(model_recipe)
+
+fitted_cv <- fit_resamples(model_workflow_rf, tt_folds,
+                           metrics = metric_set(rmse, rsq, mae))
+
+# Get the averaged metrics for the 10fold CV
+metrics_folds_rf <- collect_metrics(fitted_cv)
+metrics_folds_rf
+```
+
+```{r}
+# TODO - process data in form acceptable for svm
+
+# model_workflow_svm <- workflow() %>%
+#   add_model(svm_model) %>% 
+#   add_recipe(model_recipe)
+# 
+# fitted_cv <- fit_resamples(model_workflow_svm, tt_folds,
+#                            metrics = metric_set(rmse, rsq, mae))
+
+# Get the averaged metrics for the 10fold CV
+# metrics_folds_svm <- collect_metrics(fitted_cv)
+# metrics_folds_svm
+```
+
+```{r}
+fitted_model <- model_workflow_rf %>% fit(tt_training)
 
 # Metrics
 
