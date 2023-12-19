@@ -355,15 +355,40 @@ metrics_folds_rf
 # metrics_folds_svm
 ```
 
+Pick the best performing model to train on whole training dataset
+Lowest MAE
+
 ```{r}
-fitted_model <- model_workflow_rf %>% fit(tt_training)
+models_perfomance <- tribble(
+  ~name, ~mae,
+  "linear", metrics_folds_linear$mean[[1]],
+  "rf", metrics_folds_rf$mean[[1]]
+  # ,"svm", metrics_folds_svm$mean[[1]]
+)
+
+best_performance <- which.min(models_perfomance$mae)
+best_model <- models_perfomance$name[[best_performance]]
+
+if (best_model == "linear") {
+  final_workflow <- model_workflow_linear
+  print("Best performing model: Linear regression.")
+  print(paste0("MAE: ", models_perfomance$mae[[best_performance]]))
+} else if (best_model == "rf") {
+  final_workflow <- model_workflow_linear
+  print("Best performing model: Random forest.")
+  print(paste0("MAE: ", models_perfomance$mae[[best_performance]]))
+} 
+```
+
+Fitting on whole training dataset
+
+```{r}
+
+fitted_model <- final_workflow %>% fit(tt_training)
 
 # Metrics
 
-
-
 training_results <- tt_testing %>% 
-  #select(Global_Sales_log) %>% 
   bind_cols(
     predict(fitted_model, new_data = tt_testing[, predictors])
   ) %>%
