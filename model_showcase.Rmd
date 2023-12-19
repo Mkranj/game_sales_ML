@@ -37,13 +37,13 @@ Overview without extremes
 ```{r}
 
 ggplot(games %>% 
-         filter(Global_Sales < 2), 
+         filter(Global_Sales < 10000000), 
        aes(x = Global_Sales)) + geom_histogram()
 ```
 ```{r}
 
 ggplot(games %>% 
-         filter(Global_Sales < 0.5), 
+         filter(Global_Sales < 1000000), 
        aes(x = Global_Sales)) + geom_histogram()
 ```
 By years of release

@@ -5,7 +5,16 @@ library(stringr)
 source("prep_functions.R")
 set.seed(1233)
 original <- read.csv("Video_Games_Sales_as_at_22_Dec_2016.csv")
-# Sales + rating data
+
+# Sales represented in millions. Transform to actual millions for ease of
+# interpretation
+
+original <- mutate(
+  original,
+  across(ends_with("Sales"),
+         ~ .x * 1000000)
+)
+
 
 # Release year as numeric. Missing coded as N/A - okay to be lost.
 original$Year_release_n <- as.numeric(original$Year_of_Release)
