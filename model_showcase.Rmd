@@ -418,6 +418,8 @@ rmse_t <- training_metrics$.estimate[[1]]
 sd_target <- sd(tt_testing$Global_Sales)
 ratio <- rmse_t / sd_target
 
+# This ratio is also one form of a Normalized RMSE
+
 cat(paste0(
   "RMSE: ", rmse_t,
   "\nSD of global sales: ", sd_target,
